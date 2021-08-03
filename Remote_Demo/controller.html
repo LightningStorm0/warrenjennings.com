@@ -12,8 +12,6 @@ html, body {margin: 0; height: 100%; overflow: hidden}
   <div id="input">
     <input id="id" value="">
     <input type="button" id="connect" value="Connect" onclick="connect();">
-    <br>
-    <input type="button" id="press" value="Press" ontouchstart="PDown();" onmousedown="PDown();" ontouchend="PUp();" onmouseup="PUp();">
   </div>
 <script>
 
@@ -25,18 +23,7 @@ var peer;
 
 var peerID = "Loading...";
 
-var p = false;
-
 var connection;
-
-function PDown() {
-  p = true;
-
-}
-
-function PUp() {
-  p = false;
-}
 
 function connect() {
   peer = new Peer((Math.random().toString(36) + '0000000000000000000').substr(2, 6));
@@ -90,19 +77,27 @@ var joystick = {
 var a = {
   touchID: 0,
   pressed: false,
+  released: false,
   frames: 0,
 }
 
 var b = {
   touchID: 0,
   pressed: false,
+  released: false,
   frames: 0,
 }
 
+var actions = [];
+
 function frame() {
+  actions = [];
+
+  input();
+
   draw();
 
-  connection.send(p);
+  connection.send([joystick.to, actions]);
 }
 
 function canvasTouchStart(event) {
@@ -168,11 +163,13 @@ function canvasTouchEnd(event) {
       a.pressed = false;
       a.touchID = 0;
       a.frames = 0;
+      a.released = true,
     }
     if (b.touchID == event.changedTouches[t].identifier) {
       b.pressed = false;
       b.touchID = 0;
       b.frames = 0;
+      b.released = true,
     }
   }
 }
@@ -214,6 +211,42 @@ function draw() {
   c.fill();
 }
 
+function input() {
+  if (a.pressed) {
+    a.frames += 1;
+  }
+  if (a.frames == 5 && !a.released) {
+    actions.append(["a_start_hold", 0])
+  }
+
+  if (a.released) {
+    a.released = false;
+    if (a.frames > 5) {
+      actions.append(["a_end_hold", a.frames])
+    }
+    else {
+      actions.append(["a_tap", 0])
+    }
+  }
+
+
+  if (b.pressed) {
+    a.frames += 1;
+  }
+  if (b.frames == 5 && !b.released) {
+    actions.append(["b_start_hold", 0])
+  }
+
+  if (b.released) {
+    b.released = false;
+    if (b.frames > 5) {
+      actions.append(["b_end_hold", b.frames])
+    }
+    else {
+      actions.append(["b_tap", 0])
+    }
+  }
+}
 
 </script>
 </html>
