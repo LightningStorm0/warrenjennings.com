@@ -162,13 +162,11 @@ function canvasTouchEnd(event) {
     if (a.touchID == event.changedTouches[t].identifier) {
       a.pressed = false;
       a.touchID = 0;
-      a.frames = 0;
       a.released = true;
     }
     if (b.touchID == event.changedTouches[t].identifier) {
       b.pressed = false;
       b.touchID = 0;
-      b.frames = 0;
       b.released = true;
     }
   }
