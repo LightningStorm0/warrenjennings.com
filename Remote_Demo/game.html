@@ -39,7 +39,9 @@ peer.on('connection', function(conn) {
     // Receive messages
     conn.on('data', function(data) {
       p = data;
-      console.log(data.toString());
+      for (d in data.actions) {
+        console.log(d);
+      }
     });
   });
 });

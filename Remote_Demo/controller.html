@@ -89,6 +89,7 @@ var b = {
 }
 
 var actions = [];
+var action_frames = [];
 
 function frame() {
   actions = [];
@@ -97,7 +98,7 @@ function frame() {
 
   draw();
 
-  connection.send([joystick.to, actions]);
+  connection.send({joystick: joystick.to, actions: actions, action_frames: action_frames});
 }
 
 function canvasTouchStart(event) {
@@ -217,16 +218,19 @@ function input() {
     a.frames += 1;
   }
   if (a.frames == hold_frames && !a.released) {
-    actions.push(["a_start_hold", 0])
+    actions.push("a_start_hold")
+    action_frames.push(0)
   }
 
   if (a.released) {
     a.released = false;
     if (a.frames > hold_frames) {
-      actions.push(["a_end_hold", a.frames])
+      actions.push("a_end_hold")
+      action_frames.push(a.frames)
     }
     else {
-      actions.push(["a_tap", 0])
+      actions.push("a_tap")
+      action_frames.push(0)
     }
   }
 
@@ -235,16 +239,19 @@ function input() {
     b.frames += 1;
   }
   if (b.frames == hold_frames && !b.released) {
-    actions.push(["b_start_hold", 0])
+    actions.push("b_start_hold")
+    action_frames.push(0)
   }
 
   if (b.released) {
     b.released = false;
     if (b.frames > hold_frames) {
-      actions.push(["b_end_hold", b.frames])
+      actions.push("b_end_hold")
+      action_frames.push(b.frames)
     }
     else {
-      actions.push(["b_tap", 0])
+      actions.push("b_tap")
+      action_frames.push(0)
     }
   }
 }
