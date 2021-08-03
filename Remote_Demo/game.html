@@ -106,7 +106,26 @@ function updateGameArea() {
 
     var ctx = myGameArea.context;
 
+
+    ctx.fillStyle = "#000000"
+
     for (p in players) {
+      if (players[p].action_buffer == "a_tap" || players[p].action_buffer == "a_hold_end") {
+        ctx.fillStyle = "#3b54f7"
+        players[p].action_buffer = "";
+      }
+      else if (players[p].action_buffer == "a_hold_start") {
+        ctx.fillStyle = "#3b54f7"
+      }
+
+      if (players[p].action_buffer == "b_tap" || players[p].action_buffer == "b_hold_end") {
+        ctx.fillStyle = "#f77b8c"
+        players[p].action_buffer = "";
+      }
+      else if (players[p].action_buffer == "b_hold_start") {
+        ctx.fillStyle = "#f77b8c"
+      }
+
       ctx.fillRect(players[p].position[0]-10, players[p].position[1]-10, 20, 20);
     }
 }
