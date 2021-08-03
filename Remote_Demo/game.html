@@ -12,7 +12,7 @@ html, body {margin: 0; height: 100%; overflow: hidden}
 </style>
 </head>
 <body onload="startGame()">
-<div style="position: absolute; left: 0px; top: 0px; margin: 5px; z-index: 1;"><div id="id"></div><img src="https://api.qrserver.com/v1/create-qr-code/?data='warrenjennings.com/?id=test'&size=128x128"></div>
+<div style="position: absolute; left: 0px; top: 0px; margin: 5px; z-index: 1;"><img id="qr" src=""><div id="id"></div></div>
 <script>
 
 var delta = 1/60;
@@ -42,7 +42,8 @@ var players = [];
 peer.on('open', function(id) {
   console.log('My peer ID is: ' + id);
   peerID = id;
-  document.getElementById("id").innerHTML = peerID;
+  document.getElementById("qr").src = "https://api.qrserver.com/v1/create-qr-code/?data='warrenjennings.com/?g=" + peerID +"'&size=128x128"
+  document.getElementById("id").innerHTML = "Game Code: " + peerID;
 });
 
 peer.on('connection', function(conn) {

@@ -8,12 +8,29 @@ body { margin:0; }
 html, body {margin: 0; height: 100%; overflow: hidden}
 </style>
 </head>
-<body>
+<body onload="checkVars()">
   <div id="input">
     <input id="id" value="">
     <input type="button" id="connect" value="Connect" onclick="connect();">
   </div>
 <script>
+
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
+function checkVars() {
+  var v = getUrlVars()
+  console.log(v)
+  if (Object.keys(v).includes("game")) {
+    document.getElementById("id").value = v["game"]
+    connect()
+  }
+}
 
 var delta = 1/60;
 

@@ -4,7 +4,18 @@
 <a href="./Remote_Demo/game.html">game</a>
 <script>
 function redirect() {
-  window.location.href = "https://warrenjennings.com/Remote_Demo/controller.html";
+  var v = getUrlVars()
+  if (Object.keys(v).includes("g")) {
+    window.location.href = ("https://warrenjennings.com/Remote_Demo/controller.html?game=" + v["g"]);
+  }
+}
+
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
 }
 </script>
 </body>
