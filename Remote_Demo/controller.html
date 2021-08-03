@@ -158,6 +158,7 @@ function canvasTouchEnd(event) {
   for (let t = 0; t < event.changedTouches.length; t++) {
     if (joystick.touchID == event.changedTouches[t].identifier) {
       joystick.shown = false;
+      joystick.to = [0, 0];
     }
     if (a.touchID == event.changedTouches[t].identifier) {
       a.pressed = false;
