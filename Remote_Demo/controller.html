@@ -216,16 +216,16 @@ function input() {
     a.frames += 1;
   }
   if (a.frames == 5 && !a.released) {
-    actions.append(["a_start_hold", 0])
+    actions.push(["a_start_hold", 0])
   }
 
   if (a.released) {
     a.released = false;
     if (a.frames > 5) {
-      actions.append(["a_end_hold", a.frames])
+      actions.push(["a_end_hold", a.frames])
     }
     else {
-      actions.append(["a_tap", 0])
+      actions.push(["a_tap", 0])
     }
   }
 
@@ -234,16 +234,16 @@ function input() {
     a.frames += 1;
   }
   if (b.frames == 5 && !b.released) {
-    actions.append(["b_start_hold", 0])
+    actions.push(["b_start_hold", 0])
   }
 
   if (b.released) {
     b.released = false;
     if (b.frames > 5) {
-      actions.append(["b_end_hold", b.frames])
+      actions.push(["b_end_hold", b.frames])
     }
     else {
-      actions.append(["b_tap", 0])
+      actions.push(["b_tap", 0])
     }
   }
 }
