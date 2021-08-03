@@ -110,19 +110,19 @@ function updateGameArea() {
     ctx.fillStyle = "#000000"
 
     for (p in players) {
-      if (players[p].action_buffer == "a_tap" || players[p].action_buffer == "a_hold_end") {
+      if (players[p].action_buffer == "a_tap" || players[p].action_buffer == "a_end_hold") {
         ctx.fillStyle = "#3b54f7"
         players[p].action_buffer = "";
       }
-      else if (players[p].action_buffer == "a_hold_start") {
+      else if (players[p].action_buffer == "a_start_hold") {
         ctx.fillStyle = "#3b54f7"
       }
 
-      if (players[p].action_buffer == "b_tap" || players[p].action_buffer == "b_hold_end") {
+      if (players[p].action_buffer == "b_tap" || players[p].action_buffer == "b_end_hold") {
         ctx.fillStyle = "#f77b8c"
         players[p].action_buffer = "";
       }
-      else if (players[p].action_buffer == "b_hold_start") {
+      else if (players[p].action_buffer == "b_start_hold") {
         ctx.fillStyle = "#f77b8c"
       }
 
