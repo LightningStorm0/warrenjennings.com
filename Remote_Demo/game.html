@@ -28,6 +28,11 @@ class Player {
   constructor() {
     this.stick = [0, 0];
     this.position = [0, 0];
+
+    this.action_buffer = "";
+
+    this.hold_frames_buffer = "";
+    this.frames_in_buffer = 0;
   }
 }
 
@@ -48,6 +53,12 @@ peer.on('connection', function(conn) {
     // Receive messages
     conn.on('data', function(data) {
       players[conn.number].stick = data.joystick
+      players[conn.number].action_buffer = data.action
+      players[conn.number].hold_frames_buffer = data.hold_frames
+      players[conn.number].frames_in_buffer = 0;
+
+      console.log("a: " + players[conn.number].action_buffer)
+      console.log("f: " + players[conn.number].hold_frames.toString())
     });
 
     conn.on('close', function(data) {

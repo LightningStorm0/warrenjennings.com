@@ -92,18 +92,18 @@ var b = {
   frames: 0,
 }
 
-var actions = [];
-var action_frames = [];
+var action = "";
+var action_frames = 0;
 
 function frame() {
-  actions = [];
-  action_frames = [];
+  action = "";
+  action_frames = 0;
 
   input();
 
   draw();
 
-  connection.send({joystick: joystick.to, actions: actions, action_frames: action_frames});
+  connection.send({joystick: joystick.to, action: action, action_frames: action_frames});
 }
 
 function canvasTouchStart(event) {
@@ -222,19 +222,19 @@ function input() {
     a.frames += 1;
   }
   if (a.frames == hold_frames && !a.released) {
-    actions.push("a_start_hold")
-    action_frames.push(0)
+    action = "a_start_hold"
+    action_frames = 0
   }
 
   if (a.released) {
     a.released = false;
     if (a.frames > hold_frames) {
-      actions.push("a_end_hold")
-      action_frames.push(a.frames)
+      action = "a_end_hold"
+      action_frames = a.frames
     }
     else {
-      actions.push("a_tap")
-      action_frames.push(0)
+      action = "a_tap"
+      action_frames = 0
     }
   }
 
@@ -243,19 +243,19 @@ function input() {
     b.frames += 1;
   }
   if (b.frames == hold_frames && !b.released) {
-    actions.push("b_start_hold")
-    action_frames.push(0)
+    action = "b_start_hold"
+    action_frames = 0
   }
 
   if (b.released) {
     b.released = false;
     if (b.frames > hold_frames) {
-      actions.push("b_end_hold")
-      action_frames.push(b.frames)
+      action = "b_end_hold"
+      action_frames = b.frames
     }
     else {
-      actions.push("b_tap")
-      action_frames.push(0)
+      action = "b_tap"
+      action_frames = 0
     }
   }
 }
