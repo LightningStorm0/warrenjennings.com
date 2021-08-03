@@ -4,17 +4,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
 <style>
-canvas {
-    border:1px solid #d3d3d3;
-    background-color: #f1f1f1;
-}
+body { margin:0; }
+html, body {margin: 0; height: 100%; overflow: hidden}
 </style>
 </head>
 <body>
-<input id="id" value="">
-<input type="button" id="connect" value="Connect" onclick="connect();">
-<br>
-<input type="button" id="press" value="Press" ontouchstart="PDown();" onmousedown="PDown();" ontouchend="PUp();" onmouseup="PUp();">
+  <div id="input">
+    <input id="id" value="">
+    <input type="button" id="connect" value="Connect" onclick="connect();">
+    <br>
+    <input type="button" id="press" value="Press" ontouchstart="PDown();" onmousedown="PDown();" ontouchend="PUp();" onmouseup="PUp();">
+  </div>
 <script>
 
 var delta = 1/60;
@@ -50,14 +50,170 @@ function connect() {
 
     connection.on('open', function() {
       console.log("CONNECTED");
-      setInterval(frame, 1000/60);
+      myGameArea.start();
     });
   });
 }
 
+var size = [0, 0];
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        size = [window.innerWidth, window.innerHeight];
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
+        this.interval = setInterval(frame, 1000/60);
+        document.getElementById("input").remove();
+        this.canvas.addEventListener("touchstart", function (event) { canvasTouchStart(event); });
+        this.canvas.addEventListener("touchmove", function (event) { canvasTouchMove(event); });
+        this.canvas.addEventListener("touchend", function (event) { canvasTouchEnd(event); });
+        },
+    clear : function() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        size = [window.innerWidth, window.innerHeight];
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+
+var joystick = {
+  shown: false,
+  position: [0, 0],
+  to: [0, 0],
+  touchID: 0,
+}
+
+var a = {
+  touchID: 0,
+  pressed: false,
+  frames: 0,
+}
+
+var b = {
+  touchID: 0,
+  pressed: false,
+  frames: 0,
+}
+
 function frame() {
+  draw();
+
   connection.send(p);
 }
+
+function canvasTouchStart(event) {
+  for (let t = 0; t < event.touches.length; t++) {
+    if (event.touches[t].clientX < size[0]/2) {
+      joystick.shown = true;
+      joystick.position = [event.touches[t].clientX, event.touches[t].clientY];
+      joystick.to = [0, 0];
+      joystick.touchID = event.touches[t].identifier;
+    }
+    else
+    {
+      var tp = [(event.touches[t].clientX-size[0]/2)/(size[0]/2), event.touches[t].clientY/size[1]];
+      console.log(tp);
+
+      if (tp[0] > tp[1]) { // A
+        if (!a.pressed) {
+          a.pressed = true;
+          a.touchID = event.touches[t].identifier;
+          a.frames = 0;
+        }
+      }
+      else { // B
+        if (!b.pressed) {
+          b.pressed = true;
+          b.touchID = event.touches[t].identifier;
+          b.frames = 0;
+        }
+      }
+    }
+  }
+}
+
+function canvasTouchMove(event) {
+  for (let t = 0; t < event.changedTouches.length; t++) {
+    if (joystick.touchID == event.changedTouches[t].identifier) {
+      joystick.to = [event.changedTouches[t].clientX - joystick.position[0], event.changedTouches[t].clientY - joystick.position[1]];
+      joystick.to[0] = joystick.to[0]/(size[0]/6);
+      joystick.to[1] = joystick.to[1]/(size[0]/6);
+
+      if (joystick.to[0] > 1) {
+        joystick.to[0] = 1;
+      }
+      if (joystick.to[0] < -1) {
+        joystick.to[0] = -1;
+      }
+      if (joystick.to[1] > 1) {
+        joystick.to[1] = 1;
+      }
+      if (joystick.to[1] < -1) {
+        joystick.to[1] = -1;
+      }
+    }
+  }
+}
+
+function canvasTouchEnd(event) {
+  for (let t = 0; t < event.changedTouches.length; t++) {
+    if (joystick.touchID == event.changedTouches[t].identifier) {
+      joystick.shown = false;
+    }
+    if (a.touchID == event.changedTouches[t].identifier) {
+      a.pressed = false;
+      a.touchID = 0;
+      a.frames = 0;
+    }
+    if (b.touchID == event.changedTouches[t].identifier) {
+      b.pressed = false;
+      b.touchID = 0;
+      b.frames = 0;
+    }
+  }
+}
+
+function draw() {
+  var c = myGameArea.context;
+  myGameArea.clear();
+
+  if (joystick.shown) {
+    c.fillStyle = "#000000";
+    c.fillRect(joystick.position[0] - size[0]/6, joystick.position[1] - size[0]/6, size[0]/3, size[0]/3);
+
+    c.fillStyle = "#FF0000";
+    c.beginPath();
+    c.arc(joystick.position[0] + (joystick.to[0]*size[0]/6), joystick.position[1] + (joystick.to[1]*size[0]/6), size[0]/12, 0, 2 * Math.PI);
+    c.fill();
+  }
+
+  c.beginPath();
+  c.moveTo(size[0]/2, size[1]);
+  c.lineTo(size[0], size[1]);
+  c.lineTo(size[0]/2, 0);
+  c.closePath();
+  c.fillStyle = "#f73b54";
+  if (b.pressed) {
+    c.fillStyle = "#f77b8c";
+  }
+  c.fill();
+
+  c.beginPath();
+  c.moveTo(size[0]/2, 0);
+  c.lineTo(size[0], size[1]);
+  c.lineTo(size[0], 0);
+  c.closePath();
+  c.fillStyle = "#3b54f7";
+  if (a.pressed) {
+    c.fillStyle = "#7b8cf7";
+  }
+  c.fill();
+}
+
 
 </script>
 </html>
