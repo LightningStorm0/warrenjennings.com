@@ -25,6 +25,10 @@ var peerID = "Loading...";
 
 var connection;
 
+window.onbeforeunload = function(){
+   connection.close();
+}
+
 function connect() {
   peer = new Peer((Math.random().toString(36) + '0000000000000000000').substr(2, 6));
 
@@ -113,7 +117,6 @@ function canvasTouchStart(event) {
     else
     {
       var tp = [(event.touches[t].clientX-size[0]/2)/(size[0]/2), event.touches[t].clientY/size[1]];
-      console.log(tp);
 
       if (tp[0] > tp[1]) { // A
         if (!a.pressed) {

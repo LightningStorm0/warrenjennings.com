@@ -22,7 +22,7 @@ var peer = new Peer((Math.random().toString(36) + '0000000000000000000').substr(
 
 var peerID = "Loading...";
 
-var connections;
+var connections = [];
 
 class Player {
   constructor() {
@@ -31,9 +31,7 @@ class Player {
   }
 }
 
-var players;
-
-var p = [];
+var players = [];
 
 peer.on('open', function(id) {
   console.log('My peer ID is: ' + id);
@@ -49,11 +47,13 @@ peer.on('connection', function(conn) {
   conn.on('open', function() {
     // Receive messages
     conn.on('data', function(data) {
-      p = data;
-      for (d in data.actions) {
-        console.log(data.actions[d]);
-        players[conn.number].stick = data.joystick
-      }
+      players[conn.number].stick = data.joystick
+    });
+
+    conn.on('close', function(data) {
+      console.log("closed a connection")
+      players.splice(conn.number, 1);
+      connections.splice(conn.number, 1);
     });
   });
 });
@@ -79,7 +79,16 @@ var myGameArea = {
     }
 }
 
+function compute() {
+  for (p in players) {
+    players[p].position[0] += players[p].stick[0]*delta*20
+    players[p].position[1] += players[p].stick[1]*delta*20
+  }
+}
+
 function updateGameArea() {
+    compute()
+
     myGameArea.clear();
 
     var ctx = myGameArea.context;
