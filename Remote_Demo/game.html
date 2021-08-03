@@ -40,7 +40,7 @@ peer.on('connection', function(conn) {
     conn.on('data', function(data) {
       p = data;
       for (d in data.actions) {
-        console.log(d);
+        console.log(data.actions[d]);
       }
     });
   });
