@@ -42,7 +42,7 @@ var players = [];
 peer.on('open', function(id) {
   console.log('My peer ID is: ' + id);
   peerID = id;
-  document.getElementById("qr").src = "https://api.qrserver.com/v1/create-qr-code/?data='warrenjennings.com/?g=" + peerID +"'&size=128x128"
+  document.getElementById("qr").src = "https://api.qrserver.com/v1/create-qr-code/?data=warrenjennings.com/?g=" + peerID +"&size=128x128"
   document.getElementById("id").innerHTML = "Game Code: " + peerID;
 });
 
