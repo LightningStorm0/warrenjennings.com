@@ -1,0 +1,116 @@
+<head>
+  <style>
+    #wheel {
+      --steer: 0deg;
+
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+
+      transform: rotate(var(--steer));
+
+      position: absolute;
+
+      z-index: 2;
+    }
+    #throttle {
+      position: absolute;
+
+      background: #AAAAAA;
+      border-radius: 50%;
+
+      overflow: hidden;
+
+      z-index: 0;
+    }
+    #gas {
+      position: absolute;
+      background: #00FF00;
+      overflow: hidden;
+
+      z-index: 1;
+    }
+    #brake {
+      position: absolute;
+      background: #FF0000;
+      overflow: hidden;
+
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <img id="wheel" src="./steeringWheel.png">
+
+  <div id="throttle">
+    <div id="gas">
+    </div>
+    <div id="brake">
+    </div>
+  </div>
+
+  <script>
+    var g = null;
+
+    window.addEventListener("gamepadconnected", function(e) {
+      g = e.gamepad;
+      console.log("connected");
+    });
+
+    window.addEventListener("gamepaddisconnected", function(e) {
+      g = null;
+      console.log("disconnected");
+    });
+
+    var w = document.querySelector('#wheel');
+    var t = document.querySelector('#throttle');
+
+    var gas = document.querySelector('#gas');
+    var brake = document.querySelector('#brake');
+
+    window.onload = function() {
+      function test() {
+        gas.style.setProperty('width', (window.innerWidth*0.45).toString()+'px');
+        brake.style.setProperty('width', (window.innerWidth*0.45).toString()+'px');
+
+        gas.style.setProperty('height', (window.innerWidth*0.90).toString()+'px');
+        brake.style.setProperty('height', (window.innerWidth*0.90).toString()+'px');
+
+        gas.style.setProperty('left', (window.innerWidth*0.45).toString()+'px');
+        brake.style.setProperty('left', (window.innerWidth*0.00).toString()+'px');
+
+        gas.style.setProperty('top', (window.innerWidth*0.9).toString()+'px');
+        brake.style.setProperty('top', (window.innerWidth*0.9).toString()+'px');
+
+        t.style.setProperty('width', (window.innerWidth*0.90).toString()+'px');
+        t.style.setProperty('height', (window.innerWidth*0.90).toString()+'px');
+
+        t.style.setProperty('left', (window.innerWidth*0.05).toString()+'px');
+        t.style.setProperty('top', (window.innerWidth*0.05).toString()+'px');
+
+        w.style.setProperty('left', (window.innerWidth*0.10).toString()+'px');
+        w.style.setProperty('top', (window.innerWidth*0.10).toString()+'px');
+
+        w.style.setProperty('width', (window.innerWidth*0.80).toString()+'px');
+        w.style.setProperty('height', (window.innerWidth*0.80).toString()+'px');
+
+        if (g != null) {
+          g = navigator.getGamepads()[g.index];
+
+          if ((g.axes[0]) > 0.111 || (g.axes[0]) < -0.111) {
+            w.style.setProperty('--steer', (g.axes[0]*45).toString() + 'deg');
+          } else {
+            w.style.setProperty('--steer', '0deg');
+          }
+
+          console.log(g.buttons[6].value);
+          console.log(g.buttons[7].value);
+
+          gas.style.setProperty('top', ((window.innerWidth*0.9)-(window.innerWidth*0.9*g.buttons[7].value)).toString()+'px');
+          brake.style.setProperty('top', ((window.innerWidth*0.9)-(window.innerWidth*0.9*g.buttons[6].value)).toString()+'px');
+        }
+      }
+      setInterval(test, 16);
+    }
+  </script>
+</body>
